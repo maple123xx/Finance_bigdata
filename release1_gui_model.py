@@ -44,6 +44,7 @@ def main():
 
 if __name__=='__main__':
     #hello world
+    #第二次尝试
     y_pred=main()
     fund = fund_catagory()
     for i in range(len(fund)):
