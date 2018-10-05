@@ -44,10 +44,17 @@ def main():
 
 if __name__=='__main__':
     y_pred=main()
+    df_pred = pd.DataFrame(y_pred, columns=['day1', 'day2', 'day3', 'day4', 'day5'])#预测的未来5天的股价
+    col_name = df_pred.columns.tolist()
+    col_name.insert(0,'day_old')    #每个股票最后一天的股价,放在第一列
+    df_pred=df_pred.reindex(columns=col_name)
+
     fund = fund_catagory()
     for i in range(len(fund)):
-        fund[i].join
-    df_pred=pd.DataFrame(y_pred,columns=['day1','day2','day3','day4','day5'])
+        df_pred.ix[i,'day_old']=fund[i].ix[-1,'close']
+    df_pred['diff']=df_pred['day5']-df_pred['day_old']
+    df_pred.sort_values(by='diff',ascending=False,inplace=True)
+
     df_pred.to_csv(r'./data/v1_gui_predict.csv')
 
 
