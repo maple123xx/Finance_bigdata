@@ -9,11 +9,11 @@ import numpy as np
 # plt.plot([330,331,332,333,334],[94.28090797,97.61421877,95.76907428,95.97743284,97.65476814],color='orange')
 # plt.show()
 # print(fund144)
-df_pred=pd.read_csv(r'./data/v1_gui_predict.csv')
+df_pred=pd.read_csv(r'./data/Ngt5_lgb.csv')
 df_pred.rename(columns={'Unnamed: 0':'sorted_id'},inplace=True)
 df_pred.ix[14:,'diff']=0
 df_pred['weight']=df_pred['diff']/(df_pred['diff'].sum())
-df_pred.to_csv(r'./data/Ngt5_lgb.csv')
+df_pred.to_csv(r'./data/Ngt5_lgb_release1.csv') #必须提供不同的文件名
 submission=pd.read_csv(r'./data/submission_sample.csv')
 submission['weight']=0.0
 

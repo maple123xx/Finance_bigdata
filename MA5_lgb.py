@@ -1,8 +1,6 @@
 #-*-coding=utf-8-*-
 import pandas as pd
 import lightgbm as lgb
-import numpy as np
-from sklearn.linear_model import LinearRegression
 from sklearn import preprocessing
 import xlrd
 from datetime import datetime,timedelta
@@ -17,26 +15,44 @@ def fund_catagory():#将基金按照ID分开成222个基金
         fund.append(each_fund)
     return fund
 
+#加5条数据用于预测
+def add_day(str):
+    time = datetime.strptime(str, '%Y/%m/%d')
+    time = time + timedelta(1)
+    if time.weekday() > 4:
+        time = time + timedelta(1)
+    if time.weekday() > 4:
+        time = time + timedelta(1)
+    str = datetime.strftime(time, '%Y/%m/%d')
+    return str
+def X_add(X):
+    time_now = datetime.strptime(X.index[-1], '%Y/%m/%d')#str to time
+    time_now=time_now+timedelta(7)#加7天，下一次开盘是10月8日
+    time_now=datetime.strftime(time_now,'%Y/%m/%d')#time to str
+    for _ in range(5):
+        time_now = add_day(time_now)
+        X.loc[time_now] = X[-5:].apply(lambda x: x.mean())
+    return X
+
 def main():
     fund = fund_catagory()
+    print(len(fund))
     y_pred=[]#222个基金未来5天的预测收盘价
     for i in range(len(fund)):
         fund[i]=fund[i][['close','BBI','MA','MACD','KDJ']]#特征选择
         X=fund[i][['BBI','MA','MACD','KDJ']]
-        Y=fund[i]['close'].shift(-5)
+        Y=fund[i]['close']
+        X=X_add(X)
         X.fillna(method='ffill',inplace=True)
-        X=np.array(X)
         X_scaled = preprocessing.scale(X)
         X_train = X_scaled[:-5]
         X_predict = X_scaled[-5:]
-        y_train = np.array(Y.iloc[:-5])
+        y_train = Y
 
-        print('Start training {} fund'.format(i+1))
-        # clf=LinearRegression(n_jobs=-1)
-        # clf.fit(X_train,y_train)
-        # y_predict = clf.predict(X_predict).tolist()
+        print('Start training...')
         gbm = lgb.LGBMRegressor(objective='regression', num_leaves=31, learning_rate=1, n_estimators=25)
         gbm.fit(X_train, y_train, eval_metric='l1')
+        print('Start predicting...')
         y_predict = gbm.predict(X_predict).tolist()
         y_pred.append(y_predict)
 
@@ -44,17 +60,7 @@ def main():
 
 if __name__=='__main__':
     y_pred=main()
-    df_pred = pd.DataFrame(y_pred, columns=['day1', 'day2', 'day3', 'day4', 'day5'])#预测的未来5天的股价
-    col_name = df_pred.columns.tolist()
-    col_name.insert(0,'day_old')    #每个股票最后一天的股价,放在第一列
-    df_pred=df_pred.reindex(columns=col_name)
-
-    fund = fund_catagory()
-    for i in range(len(fund)):
-        df_pred.ix[i,'day_old']=fund[i].ix[-1,'close']
-    df_pred['diff']=df_pred['day5']-df_pred['day_old']
-    df_pred.sort_values(by='diff',ascending=False,inplace=True)
-
-    df_pred.to_csv(r'./data/v1_gui_predict.csv')
+    df_pred=pd.DataFrame(y_pred,columns=['day1','day2','day3','day4','day5'])
+    df_pred.to_csv(r'./data/MA5_lgb_release1.csv')
 
 
