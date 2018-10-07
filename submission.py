@@ -21,4 +21,7 @@ count=0
 for i in df_pred['sorted_id'].tolist():
     submission.ix[i,'weight']=df_pred.ix[count,'stock_return']
     count+=1
+submission['weight'].ix[submission['weight']!=0.0]=1/66
+for i in [290,291,433,434,435,436]:
+    submission['weight'].ix[submission['fund_id']==i]=1/66
 submission.to_csv(r'./data/submission.csv',index=False)
