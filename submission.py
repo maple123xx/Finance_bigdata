@@ -11,14 +11,14 @@ import numpy as np
 # print(fund144)
 df_pred=pd.read_csv(r'./data/Ngt5_lgb.csv')
 df_pred.rename(columns={'Unnamed: 0':'sorted_id'},inplace=True)
-df_pred.ix[14:,'diff']=0
-df_pred['weight']=df_pred['diff']/(df_pred['diff'].sum())
-df_pred.to_csv(r'./data/Ngt5_lgb_release1.csv') #必须提供不同的文件名
+df_pred['stock_return']=1/60
+df_pred.ix[60:,'stock_return']=0
+df_pred.to_csv(r'./data/Ngt5_lgb_release2.csv') #必须提供不同的文件名
 submission=pd.read_csv(r'./data/submission_sample.csv')
 submission['weight']=0.0
 
 count=0
 for i in df_pred['sorted_id'].tolist():
-    submission.ix[i,'weight']=df_pred.ix[count,'weight']
+    submission.ix[i,'weight']=df_pred.ix[count,'stock_return']
     count+=1
 submission.to_csv(r'./data/submission.csv',index=False)

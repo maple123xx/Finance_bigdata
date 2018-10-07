@@ -53,7 +53,8 @@ if __name__=='__main__':
     for i in range(len(fund)):
         df_pred.ix[i,'day_old']=fund[i].ix[-1,'close']
     df_pred['diff']=df_pred['day5']-df_pred['day_old']
-    df_pred.sort_values(by='diff',ascending=False,inplace=True)
+    df_pred['stock_return'] = df_pred['diff'] / df_pred['day_old']
+    df_pred.sort_values(by='stock_return',ascending=False,inplace=True)
 
     df_pred.to_csv(r'./data/Ngt5_lgb.csv')
 
