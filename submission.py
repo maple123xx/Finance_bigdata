@@ -17,11 +17,13 @@ df_pred.to_csv(r'./data/Ngt5_lgb_release2.csv') #必须提供不同的文件名
 submission=pd.read_csv(r'./data/submission_sample.csv')
 submission['weight']=0.0
 
-count=0
-for i in df_pred['sorted_id'].tolist():
-    submission.ix[i,'weight']=df_pred.ix[count,'stock_return']
-    count+=1
-submission['weight'].ix[submission['weight']!=0.0]=1/66
-for i in [290,291,433,434,435,436]:
-    submission['weight'].ix[submission['fund_id']==i]=1/66
+# count=0
+# for i in df_pred['sorted_id'].tolist():
+#     submission.ix[i,'weight']=df_pred.ix[count,'stock_return']
+#     count+=1
+# submission['weight'].ix[submission['weight']!=0.0]=1/66
+for i in [55,74,84,186,27,5,76,134]:
+    submission['weight'].ix[submission['fund_id']==i]=5/100
+submission['weight'].ix[submission['fund_id']==435]=60/100
+print(submission)
 submission.to_csv(r'./data/submission.csv',index=False)
