@@ -24,6 +24,6 @@ submission['weight']=0.0
 # submission['weight'].ix[submission['weight']!=0.0]=1/66
 for i in [55,74,84,186,27,5,76,134]:
     submission['weight'].ix[submission['fund_id']==i]=5/100
-submission['weight'].ix[submission['fund_id']==382]=60/100
+submission['weight'].ix[submission['fund_id']==430]=60/100
 print(submission)
-submission.to_csv(r'./data/submission.csv',index=False)
+submission.to_csv(r'./data/submission1.csv',index=False)
