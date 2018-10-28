@@ -1,6 +1,7 @@
 #-*-coding=utf-8-*-
 import pandas as pd
 import lightgbm as lgb
+import xgboost as xgb
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn import preprocessing
@@ -8,7 +9,7 @@ import xlrd
 from datetime import datetime,timedelta
 
 def fund_catagory():#将基金按照ID分开成222个基金
-    fund_product = pd.read_csv(r'./data/week_pre3.csv', index_col='Date')
+    fund_product = pd.read_csv(r'./data/week_pre4.csv', index_col='Date')
     fund_num = fund_product['fund_id'].groupby(fund_product.fund_id).count()
     fund = []
     for i in range(fund_num.shape[0]):
@@ -36,9 +37,14 @@ def main():
         # clf=LinearRegression(n_jobs=-1)
         # clf.fit(X_train,y_train)
         # y_predict = clf.predict(X_predict).tolist()
-        gbm = lgb.LGBMRegressor(objective='regression', num_leaves=31, learning_rate=1, n_estimators=25)
-        gbm.fit(X_train, y_train, eval_metric='l1')
-        y_predict = gbm.predict([X_predict]).tolist()
+        # gbm = lgb.LGBMRegressor(objective='regression', num_leaves=31, learning_rate=1, n_estimators=25)
+        # gbm.fit(X_train, y_train, eval_metric='l1')
+        # y_predict = gbm.predict([X_predict]).tolist()
+        # y_pred.append(y_predict)
+
+        model = xgb.XGBRegressor(max_depth=5, learning_rate=0.1, n_estimators=160, silent=False, objective='reg:gamma')
+        model.fit(X_train, y_train)
+        y_predict = model.predict([X_predict]).tolist()
         y_pred.append(y_predict)
 
     return y_pred
@@ -57,6 +63,6 @@ if __name__=='__main__':
     df_pred['stock_return'] = df_pred['diff'] / df_pred['day_old']
     df_pred.sort_values(by='stock_return',ascending=False,inplace=True)
 
-    df_pred.to_csv(r'./data/Ngt5_lgb_week3.csv')
+    df_pred.to_csv(r'./data/Ngt5_lgb_week4.csv')
 
 
