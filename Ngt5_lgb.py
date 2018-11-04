@@ -9,18 +9,18 @@ import xlrd
 from datetime import datetime,timedelta
 
 def fund_catagory():#将基金按照ID分开成222个基金
-    fund_product = pd.read_csv(r'./data/week_pre4.csv', index_col='Date')
-    fund_num = fund_product['fund_id'].groupby(fund_product.fund_id).count()
+    fund_product = pd.read_csv(r'./data/week_pre5.csv', index_col='Date')
+    fund_num = fund_product['Fund_ID'].groupby(fund_product.Fund_ID).count()
     fund = []
     for i in range(fund_num.shape[0]):
-        each_fund = fund_product[fund_product['fund_id'].isin([i + 1])]
+        each_fund = fund_product[fund_product['Fund_ID'].isin([i + 1])]
         fund.append(each_fund)
     return fund
 
 def main():
     fund = fund_catagory()
     y_pred=[]#222个基金未来5天的预测收盘价
-    for i in range(203):
+    for i in range(len(fund)):
         fund[i]=fund[i][['close','NAV_adj','BBI','MA','MACD','KDJ']]#特征选择
         X=fund[i][['NAV_adj','BBI','MA','MACD','KDJ']]
         Y=fund[i]['close'].shift(-1)
@@ -57,12 +57,12 @@ if __name__=='__main__':
     df_pred=df_pred.reindex(columns=col_name)
 
     fund = fund_catagory()
-    for i in range(203):
+    for i in range(len(fund)):
         df_pred.ix[i,'day_old']=fund[i].ix[-1,'close']
     df_pred['diff']=df_pred['day1']-df_pred['day_old']
     df_pred['stock_return'] = df_pred['diff'] / df_pred['day_old']
     df_pred.sort_values(by='stock_return',ascending=False,inplace=True)
 
-    df_pred.to_csv(r'./data/Ngt5_lgb_week4.csv')
+    df_pred.to_csv(r'./data/Ngt5_lgb_week5.csv')
 
 
