@@ -9,7 +9,7 @@ import xlrd
 from datetime import datetime,timedelta
 
 def fund_catagory():#将基金按照ID分开成222个基金
-    fund_product = pd.read_csv(r'./data/week_pre8.csv', index_col='Date')
+    fund_product = pd.read_csv(r'./data/week_pre9.csv', index_col='Date')
     fund_num = fund_product['Fund_ID'].groupby(fund_product.Fund_ID).count()
     fund = []
     for i in range(fund_num.shape[0]):
@@ -63,6 +63,6 @@ if __name__=='__main__':
     #df_pred['stock_return'] = df_pred['diff'] / df_pred['day_old']
     df_pred.sort_values(by='diff',ascending=False,inplace=True)
 
-    df_pred.to_csv(r'./data/Ngt5_lgb_week8.csv')
+    df_pred.to_csv(r'./data/Ngt5_lgb_week9.csv')
 
 
