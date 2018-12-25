@@ -112,4 +112,5 @@ def prediction():
         # print('prev_seq的长度为', len(prev_seq))
         # print(next_seq)
         # print(predict)
+
 prediction()
