@@ -16,7 +16,6 @@ def fund_catagory():#将基金按照ID分开成222个基金
         each_fund = fund_product[fund_product['Fund_ID'].isin([i + 1])]
         fund.append(each_fund)
     return fund
-
 def main():
     fund = fund_catagory()
     y_pred=[]#222个基金未来5天的预测收盘价
